@@ -25,6 +25,13 @@ def test_codex_timeout_is_an_actionable_transport_error(monkeypatch):
         postbag.knock_codex({"thread": "fake-thread"}, "hello")
 
 
+def test_codex_nul_byte_is_an_actionable_transport_error(monkeypatch):
+    monkeypatch.setenv("POSTBAG_CODEX", sys.executable)
+
+    with pytest.raises(OSError, match="could not start.*embedded null byte"):
+        postbag.knock_codex({"thread": "fake-thread"}, "hello\0world")
+
+
 def test_missing_codex_binary_refuses_before_queueing(monkeypatch):
     monkeypatch.setenv("POSTBAG_CODEX", "/nonexistent-postbag-test/codex")
     with pytest.raises(SystemExit, match="set POSTBAG_CODEX.*stop and ask the human"):
