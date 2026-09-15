@@ -355,6 +355,8 @@ def knock_codex(door, text):
                              stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
     except subprocess.TimeoutExpired:
         raise OSError("codex queue did not return in 30 s")
+    except ValueError as e:
+        raise OSError(f"codex queue could not start ({e})") from e
     if run.returncode:  # its output is never read: it can echo the thread, a door field, or bytes that do not decode
         raise OSError(f"codex queue exited {run.returncode}")
 
